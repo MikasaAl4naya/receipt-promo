@@ -1,0 +1,11 @@
+﻿.env
+*.pyc
+__pycache__/
+*.egg-info/
+dist/
+.DS_Store
+staticfiles/
+media/
+db.sqlite3
+.idea/
+*.iml
