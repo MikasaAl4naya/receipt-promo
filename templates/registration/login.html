@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход — Чек на удачу</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="body--auth">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg width="36" height="36" viewBox="0 0 28 28" fill="none">
+        <rect width="28" height="28" rx="6" fill="#F5A623"/>
+        <path d="M7 8h14M7 12h14M7 16h8M7 20h5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="logo__text">Чек на удачу</span>
+    </div>
+    <h1 class="auth-card__title">Войти в личный кабинет</h1>
+
+    {% if form.errors %}
+      <div class="alert alert--error">Неверный логин или пароль</div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="field">
+        <label class="field__label" for="id_username">Имя пользователя</label>
+        <input class="field__input" type="text" name="username" id="id_username" autofocus required>
+      </div>
+      <div class="field">
+        <label class="field__label" for="id_password">Пароль</label>
+        <input class="field__input" type="password" name="password" id="id_password" required>
+      </div>
+      <input type="hidden" name="next" value="{{ next }}">
+      <button type="submit" class="btn btn--primary btn--block">Войти</button>
+    </form>
+  </div>
+</body>
+</html>

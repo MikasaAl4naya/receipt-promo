@@ -1,0 +1,76 @@
+﻿{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Мои чеки — Чек на удачу{% endblock %}
+
+{% block content %}
+<div class="page-head page-head--row">
+  <div>
+    <h1 class="page-head__title">Мои чеки</h1>
+    <p class="page-head__sub">Акция: {{ promo_start }} — {{ promo_end }}</p>
+  </div>
+  <a href="{% url 'register_receipt' %}" class="btn btn--primary">+ Зарегистрировать чек</a>
+</div>
+
+{% if page_obj.object_list %}
+  <div class="card card--table">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Дата покупки</th>
+          <th>Сумма</th>
+          <th>ФН</th>
+          <th>ФД</th>
+          <th>ФП</th>
+          <th>Статус</th>
+          <th>Причина отказа</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in page_obj %}
+        <tr data-id="{{ r.pk }}">
+          <td>{{ r.purchase_date|date:"d.m.Y H:i" }}</td>
+          <td class="td--amount">{{ r.amount|floatformat:2 }} ₽</td>
+          <td class="td--mono">{{ r.fn }}</td>
+          <td class="td--mono">{{ r.fd }}</td>
+          <td class="td--mono">{{ r.fp }}</td>
+          <td>
+            <span class="badge badge--{{ r.status_css }}" data-badge="{{ r.pk }}">{{ r.get_status_display }}</span>
+          </td>
+          <td class="td--reason" data-reason="{{ r.pk }}">
+            {% if r.rejection_reason %}{{ r.rejection_reason }}{% else %}<span class="td--empty">—</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if page_obj.has_other_pages %}
+  <nav class="pagination">
+    {% if page_obj.has_previous %}
+      <a class="pagination__btn" href="?page={{ page_obj.previous_page_number }}">&larr; Назад</a>
+    {% endif %}
+    <span class="pagination__info">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a class="pagination__btn" href="?page={{ page_obj.next_page_number }}">Вперёд &rarr;</a>
+    {% endif %}
+  </nav>
+  {% endif %}
+
+{% else %}
+  <div class="empty-state card">
+    <svg class="empty-state__icon" width="56" height="56" viewBox="0 0 28 28" fill="none">
+      <rect width="28" height="28" rx="6" fill="#F0F2F8"/>
+      <path d="M7 8h14M7 12h14M7 16h8M7 20h5" stroke="#A0A8BF" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <h2 class="empty-state__title">Чеков пока нет</h2>
+    <p class="empty-state__text">Зарегистрируйте первый чек, чтобы участвовать в акции</p>
+    <a href="{% url 'register_receipt' %}" class="btn btn--primary">Зарегистрировать чек</a>
+  </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/cabinet.js' %}"></script>
+{% endblock %}

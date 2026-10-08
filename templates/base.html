@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Чек на удачу{% endblock %}</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <header class="header">
+    <div class="container header__inner">
+      <a href="{% url 'register_receipt' %}" class="logo">
+        <svg class="logo__icon" width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect width="28" height="28" rx="6" fill="#F5A623"/>
+          <path d="M7 8h14M7 12h14M7 16h8M7 20h5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="logo__text">Чек на удачу</span>
+      </a>
+      <nav class="nav">
+        {% if user.is_authenticated %}
+          <a href="{% url 'cabinet' %}" class="nav__link">Мои чеки</a>
+          <a href="{% url 'register_receipt' %}" class="btn btn--sm btn--primary">Зарегистрировать чек</a>
+          <span class="nav__user">{{ user.username }}</span>
+          <a href="{% url 'logout' %}" class="nav__link">Выйти</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn--sm btn--primary">Войти</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert--{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <span>© 2024 Чек на удачу</span>
+      {% if promo_start and promo_end %}
+        <span>Акция: {{ promo_start }} — {{ promo_end }}</span>
+      {% endif %}
+    </div>
+  </footer>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
