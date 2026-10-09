@@ -1,73 +1,206 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 {% load static %}
 
-{% block title %}Мои чеки — Чек на удачу{% endblock %}
+{% block title %}История чеков — Чек на удачу{% endblock %}
 
 {% block content %}
-<div class="page-head page-head--row">
-  <div>
-    <h1 class="page-head__title">Мои чеки</h1>
-    <p class="page-head__sub">Акция: {{ promo_start }} — {{ promo_end }}</p>
-  </div>
-  <a href="{% url 'register_receipt' %}" class="btn btn--primary">+ Зарегистрировать чек</a>
-</div>
-
 {% if page_obj.object_list %}
+
   <div class="card card--table">
+    <div class="table-head">
+      <h1 class="page-head__title">История чеков</h1>
+      <div class="count-pill">Чеков внесено: <span class="count-pill__num">{{ page_obj.paginator.count }} шт.</span></div>
+    </div>
+
     <table class="table">
       <thead>
         <tr>
-          <th>Дата покупки</th>
-          <th>Сумма</th>
-          <th>ФН</th>
-          <th>ФД</th>
-          <th>ФП</th>
-          <th>Статус</th>
-          <th>Причина отказа</th>
+          <th>
+            <span class="th-inner">Дата покупки
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 5.5L7 3L10 5.5M4 8.5L7 11L10 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </th>
+          <th>
+            <span class="th-inner">Статус
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 5.5L7 3L10 5.5M4 8.5L7 11L10 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </th>
+          <th>
+            <span class="th-inner">Сумма чека
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 5.5L7 3L10 5.5M4 8.5L7 11L10 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </th>
+          <th>
+            <span class="th-inner">Дата регистрации
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 5.5L7 3L10 5.5M4 8.5L7 11L10 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </th>
+          <th>
+            <span class="th-inner">Информация
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 5.5L7 3L10 5.5M4 8.5L7 11L10 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </th>
         </tr>
       </thead>
       <tbody>
         {% for r in page_obj %}
         <tr data-id="{{ r.pk }}">
-          <td>{{ r.purchase_date|date:"d.m.Y H:i" }}</td>
-          <td class="td--amount">{{ r.amount|floatformat:2 }} ₽</td>
-          <td class="td--mono">{{ r.fn }}</td>
-          <td class="td--mono">{{ r.fd }}</td>
-          <td class="td--mono">{{ r.fp }}</td>
+
           <td>
-            <span class="badge badge--{{ r.status_css }}" data-badge="{{ r.pk }}">{{ r.get_status_display }}</span>
+            <div class="td--date">
+              <div class="td__thumb">
+                {% if r.photo %}
+                  <img src="{{ r.photo.url }}" alt="Фото чека">
+                {% else %}
+                  <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="14" height="14" rx="2" fill="#D0D4E0"/>
+                    <rect x="6" y="6" width="8" height="8" rx="1" fill="#F6F7FA"/>
+                    <rect x="8" y="8" width="4" height="4" fill="#D0D4E0"/>
+                    <rect x="27" y="3" width="14" height="14" rx="2" fill="#D0D4E0"/>
+                    <rect x="30" y="6" width="8" height="8" rx="1" fill="#F6F7FA"/>
+                    <rect x="32" y="8" width="4" height="4" fill="#D0D4E0"/>
+                    <rect x="3" y="27" width="14" height="14" rx="2" fill="#D0D4E0"/>
+                    <rect x="6" y="30" width="8" height="8" rx="1" fill="#F6F7FA"/>
+                    <rect x="8" y="32" width="4" height="4" fill="#D0D4E0"/>
+                    <rect x="20" y="3" width="4" height="4" fill="#D0D4E0"/>
+                    <rect x="27" y="20" width="4" height="4" fill="#D0D4E0"/>
+                    <rect x="34" y="20" width="4" height="4" fill="#D0D4E0"/>
+                    <rect x="20" y="20" width="4" height="4" fill="#D0D4E0"/>
+                    <rect x="20" y="27" width="4" height="4" fill="#D0D4E0"/>
+                    <rect x="27" y="34" width="4" height="4" fill="#D0D4E0"/>
+                    <rect x="34" y="27" width="4" height="4" fill="#D0D4E0"/>
+                    <rect x="34" y="34" width="4" height="4" fill="#D0D4E0"/>
+                  </svg>
+                {% endif %}
+              </div>
+              <span>{{ r.purchase_date|date:"H:i d.m.Y" }}</span>
+            </div>
           </td>
-          <td class="td--reason" data-reason="{{ r.pk }}">
-            {% if r.rejection_reason %}{{ r.rejection_reason }}{% else %}<span class="td--empty">—</span>{% endif %}
+
+          <td>
+            <span class="badge badge--{{ r.status_css }}" data-badge="{{ r.pk }}">
+              {% if r.status == 'pending' %}
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.75" stroke="currentColor" stroke-width="1.5"/><path d="M8 5.5V8.5L9.5 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              {% elif r.status == 'accepted' %}
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.75" stroke="currentColor" stroke-width="1.5"/><path d="M5.5 8L7 9.5L10.5 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              {% elif r.status == 'rejected' %}
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.75" stroke="currentColor" stroke-width="1.5"/><path d="M6 6L10 10M10 6L6 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              {% endif %}
+              {{ r.get_status_display }}
+            </span>
           </td>
+
+          <td>
+            <div class="td--amount">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 3h10v14l-2-1.5-2 1.5-1-0.75-1 0.75-2-1.5-2 1.5V3z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.5 8h5M7.5 11h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              {{ r.amount|floatformat:0 }} ₽
+            </div>
+          </td>
+
+          <td>
+            <div class="td--regdate">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M7 3v2M13 3v2M3 9h14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              {{ r.registered_at|date:"H:i d.m.Y" }}
+            </div>
+          </td>
+
+          <td>
+            <div class="td--info" data-reason="{{ r.pk }}">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.4"/><path d="M10 9v5M10 7.5v.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              {% if r.rejection_reason %}
+                <span class="td--rejection">{{ r.rejection_reason }}</span>
+              {% elif r.status == 'pending' %}
+                <span>Чек в обработке</span>
+              {% elif r.status == 'accepted' %}
+                <span>Поздравляем, ваш чек принят!</span>
+              {% else %}
+                <span class="td--empty">—</span>
+              {% endif %}
+            </div>
+          </td>
+
         </tr>
         {% endfor %}
       </tbody>
     </table>
-  </div>
 
-  {% if page_obj.has_other_pages %}
-  <nav class="pagination">
-    {% if page_obj.has_previous %}
-      <a class="pagination__btn" href="?page={{ page_obj.previous_page_number }}">&larr; Назад</a>
+    {% if page_obj.has_other_pages %}
+    <nav class="pagination">
+      {% if page_obj.has_previous %}
+        <a class="pagination__btn" href="?page={{ page_obj.previous_page_number }}">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      {% else %}
+        <span class="pagination__btn pagination__btn--disabled">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+        {% if num == page_obj.number %}
+          <span class="pagination__num pagination__num--active">{{ num }}</span>
+        {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
+          <a class="pagination__num" href="?page={{ num }}">{{ num }}</a>
+        {% elif num == page_obj.paginator.num_pages %}
+          <span class="pagination__ellipsis">…</span>
+          <a class="pagination__num" href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <a class="pagination__btn" href="?page={{ page_obj.next_page_number }}">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      {% else %}
+        <span class="pagination__btn pagination__btn--disabled">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      {% endif %}
+    </nav>
     {% endif %}
-    <span class="pagination__info">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
-    {% if page_obj.has_next %}
-      <a class="pagination__btn" href="?page={{ page_obj.next_page_number }}">Вперёд &rarr;</a>
-    {% endif %}
-  </nav>
-  {% endif %}
+
+    <div class="cabinet-footer">
+      <div class="cabinet-footer__info">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.25" stroke="currentColor" stroke-width="1.4"/><path d="M10 9v5M10 7.5v.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Иногда проверка вашего чека может занять до 5 рабочих дней
+      </div>
+      <a href="{% url 'register_receipt' %}" class="btn btn--primary">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 3h10v14l-2-1.5-2 1.5-1-0.75-1 0.75-2-1.5-2 1.5V3z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.5 8h5M7.5 11h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Зарегистрировать чек
+      </a>
+    </div>
+  </div>
 
 {% else %}
-  <div class="empty-state card">
-    <svg class="empty-state__icon" width="56" height="56" viewBox="0 0 28 28" fill="none">
-      <rect width="28" height="28" rx="6" fill="#F0F2F8"/>
-      <path d="M7 8h14M7 12h14M7 16h8M7 20h5" stroke="#A0A8BF" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-    <h2 class="empty-state__title">Чеков пока нет</h2>
-    <p class="empty-state__text">Зарегистрируйте первый чек, чтобы участвовать в акции</p>
-    <a href="{% url 'register_receipt' %}" class="btn btn--primary">Зарегистрировать чек</a>
+
+  <div class="card card--table">
+    <div class="table-head">
+      <h1 class="page-head__title">История чеков</h1>
+      <div class="count-pill">Чеков внесено: <span class="count-pill__num">0 шт.</span></div>
+    </div>
+    <div class="empty-state">
+      <svg class="empty-state__img" width="120" height="164" viewBox="0 0 120 164" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="16" width="80" height="120" rx="8" fill="#EDEDFC"/>
+        <rect x="32" y="36" width="56" height="8" rx="4" fill="#C7C6F2"/>
+        <rect x="32" y="52" width="40" height="8" rx="4" fill="#C7C6F2"/>
+        <rect x="32" y="68" width="48" height="8" rx="4" fill="#C7C6F2"/>
+        <rect x="32" y="84" width="32" height="8" rx="4" fill="#C7C6F2"/>
+        <circle cx="40" cy="10" r="10" fill="#E0DFFA"/>
+        <text x="36" y="15" font-size="12" fill="#9B9BE8" font-family="sans-serif" font-weight="700">?</text>
+        <circle cx="80" cy="4" r="7" fill="#E0DFFA"/>
+        <text x="77" y="9" font-size="10" fill="#9B9BE8" font-family="sans-serif" font-weight="700">?</text>
+        <circle cx="88" cy="18" r="8" fill="#E0DFFA"/>
+        <text x="85" y="23" font-size="11" fill="#9B9BE8" font-family="sans-serif" font-weight="700">?</text>
+      </svg>
+      <h2 class="empty-state__title">Здесь будет история ваших чеков</h2>
+      <p class="empty-state__text">Вы не добавили еще ни одного чека</p>
+      <a href="{% url 'register_receipt' %}" class="btn btn--primary">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 3h10v14l-2-1.5-2 1.5-1-0.75-1 0.75-2-1.5-2 1.5V3z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.5 8h5M7.5 11h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Зарегистрировать чек
+      </a>
+    </div>
   </div>
+
 {% endif %}
 {% endblock %}
 

@@ -8,6 +8,18 @@
   var formMsg    = document.getElementById('form-msg');
   var errGeneral = document.getElementById('err_general');
 
+  /* -------- min/max на поле даты из настроек акции -------- */
+  (function () {
+    var dateInput = document.getElementById('id_purchase_date');
+    if (!dateInput || !window.PROMO_START || !window.PROMO_END) return;
+    function dmyToIso(dmy) {
+      var p = dmy.split('.');
+      return p[2] + '-' + p[1] + '-' + p[0];
+    }
+    dateInput.min = dmyToIso(window.PROMO_START) + 'T00:00';
+    dateInput.max = dmyToIso(window.PROMO_END) + 'T23:59';
+  })();
+
   /* -------- QR-парсер -------- */
   document.getElementById('qr-btn').addEventListener('click', function () {
     var raw    = document.getElementById('qr_string').value.trim();
@@ -61,8 +73,20 @@
         return null;
     }},
     { id: 'id_purchase_date', errId: 'err_purchase_date', check: function (v) {
-        if (!v) return 'Обязательное поле';
-        if (isNaN(new Date(v).getTime())) return 'Некорректная дата';
+        if (!v) return 'Укажите дату и время (поле заполнено не до конца)';
+        var d = new Date(v);
+        if (isNaN(d.getTime())) return 'Некорректная дата';
+        if (window.PROMO_START && window.PROMO_END) {
+          function dmyToDate(dmy) {
+            var p = dmy.split('.');
+            return new Date(p[2] + '-' + p[1] + '-' + p[0]);
+          }
+          var start = dmyToDate(window.PROMO_START);
+          var end   = dmyToDate(window.PROMO_END);
+          end.setHours(23, 59, 59, 999);
+          if (d < start) return 'Дата раньше начала акции (' + window.PROMO_START + ')';
+          if (d > end)   return 'Дата позже окончания акции (' + window.PROMO_END + ')';
+        }
         return null;
     }},
     { id: 'id_amount',        errId: 'err_amount',        check: function (v) {

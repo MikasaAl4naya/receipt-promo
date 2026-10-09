@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -10,11 +10,7 @@
 <body class="body--auth">
   <div class="auth-card">
     <div class="auth-logo">
-      <svg width="36" height="36" viewBox="0 0 28 28" fill="none">
-        <rect width="28" height="28" rx="6" fill="#F5A623"/>
-        <path d="M7 8h14M7 12h14M7 16h8M7 20h5" stroke="white" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <span class="logo__text">Чек на удачу</span>
+      <div class="auth-logo__box"></div>
     </div>
     <h1 class="auth-card__title">Войти в личный кабинет</h1>
 
@@ -33,7 +29,7 @@
         <input class="field__input" type="password" name="password" id="id_password" required>
       </div>
       <input type="hidden" name="next" value="{{ next }}">
-      <button type="submit" class="btn btn--primary btn--block">Войти</button>
+      <button type="submit" class="btn btn--primary btn--lg" style="margin-top:8px">Войти</button>
     </form>
   </div>
 </body>

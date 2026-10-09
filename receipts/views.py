@@ -52,6 +52,17 @@ def cabinet(request):
 
 
 @login_required
+def rules(request):
+    return render(request, "receipts/rules.html", _promo_ctx())
+
+
+@login_required
+def profile(request):
+    total = Receipt.objects.filter(user=request.user).count()
+    return render(request, "receipts/profile.html", {"total": total, **_promo_ctx()})
+
+
+@login_required
 def receipt_status(request, pk):
     try:
         r = Receipt.objects.get(pk=pk, user=request.user)

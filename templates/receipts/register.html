@@ -1,89 +1,74 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 {% load static %}
 
-{% block title %}Зарегистрировать чек — Чек на удачу{% endblock %}
+{% block title %}Регистрация чека — Чек на удачу{% endblock %}
 
 {% block content %}
-<div class="page-head">
-  <div>
-    <h1 class="page-head__title">Зарегистрировать чек</h1>
-    <p class="page-head__sub">Акция проводится с <strong>{{ promo_start }}</strong> по <strong>{{ promo_end }}</strong></p>
-  </div>
-</div>
+<div class="register-wrap">
+  <div class="register-card">
+    <a href="{% url 'cabinet' %}" class="register-card__close" title="Закрыть">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </a>
 
-<div class="card">
-  <!-- QR-строка (бонус) -->
-  <div class="qr-block">
-    <p class="qr-block__label">Вставьте строку из QR-кода чека — поля заполнятся автоматически</p>
-    <div class="qr-block__row">
-      <input
-        type="text"
-        id="qr_string"
-        class="field__input"
-        placeholder="t=20240115T1200&s=1500.00&fn=1234567890123456&i=12345&fp=123456789"
-      >
-      <button type="button" id="qr-btn" class="btn btn--secondary">Заполнить</button>
-    </div>
-    <p id="qr-error" class="field__error" style="display:none"></p>
-  </div>
+    <h1 class="register-card__title">Регистрация чека</h1>
+    <p class="register-card__sub">Введите необходимые данные с чека</p>
 
-  <div class="divider"><span>или заполните вручную</span></div>
-
-  <form id="receipt-form" novalidate>
-    {% csrf_token %}
-    <div class="form-grid">
+    <form id="receipt-form" novalidate>
+      {% csrf_token %}
 
       <div class="field">
-        <label class="field__label" for="id_fn">ФН (Фискальный номер) <span class="req">*</span></label>
-        <input class="field__input" type="text" id="id_fn" name="fn" maxlength="16" placeholder="16 цифр" autocomplete="off">
+        <label class="field__label" for="id_fn">ФН <span class="req">*</span></label>
+        <input class="field__input" type="text" id="id_fn" name="fn" maxlength="16" placeholder="Введите ФН" autocomplete="off">
         <p class="field__error" id="err_fn"></p>
       </div>
 
       <div class="field">
-        <label class="field__label" for="id_fd">ФД (Номер документа) <span class="req">*</span></label>
-        <input class="field__input" type="text" id="id_fd" name="fd" maxlength="10" placeholder="До 10 цифр" autocomplete="off">
+        <label class="field__label" for="id_fd">Номер чека (ФД) <span class="req">*</span></label>
+        <input class="field__input" type="text" id="id_fd" name="fd" maxlength="10" placeholder="Введите номер чека (ФД)" autocomplete="off">
         <p class="field__error" id="err_fd"></p>
       </div>
 
       <div class="field">
-        <label class="field__label" for="id_fp">ФП (Фискальный признак) <span class="req">*</span></label>
-        <input class="field__input" type="text" id="id_fp" name="fp" maxlength="10" placeholder="До 10 цифр" autocomplete="off">
+        <label class="field__label" for="id_fp">ФП <span class="req">*</span></label>
+        <input class="field__input" type="text" id="id_fp" name="fp" maxlength="10" placeholder="Введите ФП" autocomplete="off">
         <p class="field__error" id="err_fp"></p>
       </div>
 
       <div class="field">
-        <label class="field__label" for="id_purchase_date">Дата и время покупки <span class="req">*</span></label>
+        <label class="field__label" for="id_purchase_date">Дата покупки <span class="req">*</span></label>
         <input class="field__input" type="datetime-local" id="id_purchase_date" name="purchase_date">
         <p class="field__error" id="err_purchase_date"></p>
       </div>
 
       <div class="field">
-        <label class="field__label" for="id_amount">Сумма чека (₽) <span class="req">*</span></label>
-        <input class="field__input" type="number" id="id_amount" name="amount" min="1000" step="0.01" placeholder="Минимум 1 000 ₽">
+        <label class="field__label" for="id_amount">Сумма <span class="req">*</span></label>
+        <input class="field__input" type="number" id="id_amount" name="amount" min="1000" step="0.01" placeholder="0.00 ₽">
         <p class="field__error" id="err_amount"></p>
       </div>
 
-      <div class="field">
-        <label class="field__label" for="id_photo">Фото чека</label>
-        <input class="field__input field__input--file" type="file" id="id_photo" name="photo" accept="image/jpeg,image/png,image/webp">
-        <p class="field__hint">JPEG, PNG или WebP, не более 5 МБ</p>
-        <p class="field__error" id="err_photo"></p>
-      </div>
+      <input type="file" id="id_photo" name="photo" accept="image/jpeg,image/png,image/webp" style="display:none">
 
-    </div>
+      <p class="field__error field__error--general" id="err_general" style="display:none"></p>
+      <div id="form-msg" class="form-msg" style="display:none"></div>
 
-    <p class="field__error field__error--general" id="err_general" style="display:none"></p>
-
-    <div id="form-msg" class="form-msg" style="display:none"></div>
-
-    <div class="form-actions">
-      <button type="submit" id="submit-btn" class="btn btn--primary btn--lg">
-        <span class="btn__text">Зарегистрировать чек</span>
+      <button type="submit" id="submit-btn" class="btn btn--primary btn--lg" style="margin-top:8px">
+        <span class="btn__text">Загрузить</span>
         <span class="btn__loading" style="display:none">Отправка…</span>
       </button>
-      <a href="{% url 'cabinet' %}" class="btn btn--ghost">Мои чеки</a>
+    </form>
+
+    <!-- QR-парсер (бонус) -->
+    <div class="qr-block" style="margin-top:20px">
+      <p class="qr-block__label">Или вставьте строку из QR-кода — поля заполнятся автоматически</p>
+      <div class="qr-block__row">
+        <input type="text" id="qr_string" class="field__input" placeholder="t=20240115T1200&s=1500.00&fn=...">
+        <button type="button" id="qr-btn" class="btn btn--sm btn--ghost">Заполнить</button>
+      </div>
+      <p id="qr-error" class="field__error" style="display:none"></p>
     </div>
-  </form>
+  </div>
 </div>
 {% endblock %}
 

@@ -8,9 +8,9 @@ class Receipt(models.Model):
     STATUS_REJECTED = "rejected"
 
     STATUS_CHOICES = [
-        (STATUS_PENDING, "На проверке"),
-        (STATUS_ACCEPTED, "Принят"),
-        (STATUS_REJECTED, "Отклонён"),
+        (STATUS_PENDING, "В обработке"),
+        (STATUS_ACCEPTED, "Обработан"),
+        (STATUS_REJECTED, "Ошибка"),
     ]
 
     user = models.ForeignKey(

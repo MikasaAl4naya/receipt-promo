@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -11,23 +11,68 @@
 <body>
   <header class="header">
     <div class="container header__inner">
-      <a href="{% url 'register_receipt' %}" class="logo">
-        <svg class="logo__icon" width="28" height="28" viewBox="0 0 28 28" fill="none">
-          <rect width="28" height="28" rx="6" fill="#F5A623"/>
-          <path d="M7 8h14M7 12h14M7 16h8M7 20h5" stroke="white" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        <span class="logo__text">Чек на удачу</span>
-      </a>
+
+      <div class="header__left">
+        <a href="{% url 'register_receipt' %}" class="logo">
+          <div class="logo__box"></div>
+        </a>
+        <a href="#" class="header__back">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          На сайт
+        </a>
+      </div>
+
       <nav class="nav">
         {% if user.is_authenticated %}
-          <a href="{% url 'cabinet' %}" class="nav__link">Мои чеки</a>
-          <a href="{% url 'register_receipt' %}" class="btn btn--sm btn--primary">Зарегистрировать чек</a>
-          <span class="nav__user">{{ user.username }}</span>
-          <a href="{% url 'logout' %}" class="nav__link">Выйти</a>
+          <a href="{% url 'cabinet' %}" class="nav__link {% if request.resolver_match.url_name == 'cabinet' %}nav__link--active{% endif %}">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M2 7L8 2L14 7V14H10V10H6V14H2V7Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Личный кабинет
+          </a>
+          <a href="{% url 'rules' %}" class="nav__link {% if request.resolver_match.url_name == 'rules' %}nav__link--active{% endif %}">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="3" y="2" width="10" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M6 6h4M6 9h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            </svg>
+            Правила
+          </a>
+          <a href="{% url 'profile' %}" class="nav__link {% if request.resolver_match.url_name == 'profile' %}nav__link--active{% endif %}">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="5.5" r="2.75" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M2.5 14c0-3.038 2.462-5.5 5.5-5.5s5.5 2.462 5.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Профиль
+          </a>
+        {% endif %}
+      </nav>
+
+      <div class="header__right">
+        {% if user.is_authenticated %}
+          <button class="header__bell" type="button" title="Уведомления">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 2.5A5 5 0 0 0 5 7.5v3.25L3.5 13h13L15 10.75V7.5A5 5 0 0 0 10 2.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M8.5 15.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <div class="header__user">
+            <div class="header__avatar"></div>
+            <div class="header__user-info">
+              <span class="header__username">{{ user.username }}</span>
+              <span class="header__useremail">{{ user.email }}</span>
+            </div>
+          </div>
+          <form method="post" action="{% url 'logout' %}" style="display:contents">
+            {% csrf_token %}
+            <button type="submit" class="header__logout">Выйти</button>
+          </form>
         {% else %}
           <a href="{% url 'login' %}" class="btn btn--sm btn--primary">Войти</a>
         {% endif %}
-      </nav>
+      </div>
+
     </div>
   </header>
 
